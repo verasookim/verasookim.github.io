@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markets in Charts | Vera Kim</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0B1120;
+            --bg-secondary: #111827;
+            --bg-card: #1A2235;
+            --accent: #3B82F6;
+            --accent-warm: #F59E0B;
+            --accent-red: #EF4444;
+            --accent-green: #10B981;
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --border: #1E293B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── NAVIGATION ── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(11, 17, 32, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+        .nav-logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+        .nav-logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+
+        /* ── HERO ── */
+        .hero {
+            padding: 10rem 2rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 80px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-eyebrow {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.2rem;
+        }
+        .hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 3.5rem;
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            max-width: 700px;
+        }
+        .hero h1 em {
+            font-style: normal;
+            background: linear-gradient(135deg, var(--accent), #818CF8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+        .hero-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .hero-meta a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.2s;
+        }
+        .hero-meta a:hover { color: var(--accent); }
+
+        /* ── SECTION STRUCTURE ── */
+        section { padding: 4rem 2rem; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent-warm);
+            margin-bottom: 0.8rem;
+        }
+        .section-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+        .section-desc {
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        /* ── PROJECT CARD ── */
+        .project-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            transition: border-color 0.3s;
+        }
+        .project-card:hover { border-color: rgba(59,130,246,0.3); }
+
+        .project-header {
+            padding: 2.5rem 3rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .project-header h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+        }
+        .project-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .tag {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        .tag-excel { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+        .tag-tableau { background: rgba(59,130,246,0.15); color: var(--accent); }
+        .tag-risk { background: rgba(245,158,11,0.15); color: var(--accent-warm); }
+
+        .project-subtitle {
+            padding: 0 3rem 2rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            font-size: 1.05rem;
+        }
+
+        /* ── TABLEAU EMBED ── */
+        .tableau-wrapper {
+            width: 100%;
+            background: #0D1117;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .tableau-wrapper iframe {
+            width: 100%;
+            height: 780px;
+            border: none;
+            display: block;
+        }
+
+        /* ── KEY METRICS BAR ── */
+        .metrics-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border-top: 1px solid var(--border);
+        }
+        .metric {
+            background: var(--bg-card);
+            padding: 1.5rem 1.8rem;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+        }
+        .metric-value.up { color: var(--accent-green); }
+        .metric-value.down { color: var(--accent-red); }
+        .metric-value.neutral { color: var(--accent); }
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* ── WRITE-UP SECTION ── */
+        .writeup {
+            padding: 3rem;
+        }
+        .writeup h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.4rem;
+            margin: 2.5rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .writeup h3:first-child { margin-top: 0; }
+        .writeup p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            max-width: 900px;
+            font-weight: 300;
+            font-size: 0.95rem;
+        }
+        .writeup strong { color: var(--text-primary); font-weight: 600; }
+
+        .finding-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0 2rem;
+        }
+        .finding-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+        .finding-item h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: var(--text-primary);
+        }
+        .finding-item p {
+            font-size: 0.85rem;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
+        .callout {
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 3px solid var(--accent-warm);
+            padding: 1.2rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+        .callout p {
+            color: var(--text-secondary);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        .callout strong { color: var(--accent-warm); }
+
+        /* ── DATA SOURCES ── */
+        .sources {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .source-chip {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .source-chip strong { color: var(--text-secondary); }
+
+        /* ── FOOTER ── */
+        footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero { padding: 8rem 1.5rem 3rem; }
+            .project-header { padding: 1.5rem; }
+            .project-subtitle { padding: 0 1.5rem 1.5rem; }
+            .writeup { padding: 1.5rem; }
+            .finding-grid { grid-template-columns: 1fr; }
+            .tableau-wrapper iframe { height: 500px; }
+            .nav-links { gap: 1rem; }
+        }
+
+        /* ── ANIMATIONS ── */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
+        }
+        .fade-in:nth-child(2) { animation-delay: 0.1s; }
+        .fade-in:nth-child(3) { animation-delay: 0.2s; }
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">Markets <span>in</span> Charts</a>
+        <ul class="nav-links">
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="mailto:verasookim@gmail.com">Contact</a></li>
+            <li><a href="https://www.linkedin.com/in/vera-sookyung-kim/" target="_blank">LinkedIn</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+    <div class="fade-in">
+        <p class="hero-eyebrow">Finance Analytics Portfolio</p>
+        <h1>Turning market data into <em>visual insight</em></h1>
+        <p class="hero-subtitle">A finance-analytics portfolio featuring Tableau and Excel dashboards with clear explanations of the underlying metrics, assumptions, and insights. Focused on risk management and geopolitical market analysis.</p>
+        <div class="hero-meta">
+            <a href="mailto:verasookim@gmail.com">verasookim@gmail.com</a>
+            <a href="https://www.linkedin.com/in/vera-sookyung-kim/" target="_blank">LinkedIn &nearr;</a>
+        </div>
+    </div>
+</header>
+
+<!-- PROJECTS -->
+<section id="projects">
+    <div class="container">
+        <p class="section-label">Case Studies</p>
+        <h2 class="section-title">Featured Projects</h2>
+        <p class="section-desc">Each project follows a full analytical pipeline: data sourcing, Excel modeling, Tableau visualization, and written interpretation.</p>
+
+        <!-- PROJECT 1: Iran Conflict Dashboard -->
+        <article class="project-card fade-in">
+            <div class="project-header">
+                <h2>Cross-Asset Contagion: The 2026 Iran Conflict Oil Shock</h2>
+                <div class="project-tags">
+                    <span class="tag tag-risk">Risk Management</span>
+                    <span class="tag tag-excel">Excel</span>
+                    <span class="tag tag-tableau">Tableau</span>
+                </div>
+            </div>
+            <p class="project-subtitle">How the Feb 28 US-Israel military strikes on Iran rippled across 14 asset classes — from oil to equities, volatility, rates, and emerging market currencies.</p>
+
+            <!-- KEY METRICS -->
+            <div class="metrics-bar">
+                <div class="metric">
+                    <div class="metric-value up">+41.4%</div>
+                    <div class="metric-label">WTI Crude Return</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value up">+32.3%</div>
+                    <div class="metric-label">Brent Crude Return</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value up">+28.4%</div>
+                    <div class="metric-label">VIX Spike</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value down">-9.4%</div>
+                    <div class="metric-label">Airlines (JETS) Return</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value neutral">14</div>
+                    <div class="metric-label">Assets Tracked</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value neutral">71</div>
+                    <div class="metric-label">Trading Days</div>
+                </div>
+            </div>
+
+            <!-- TABLEAU EMBED -->
+            <div class="tableau-wrapper">
+                <iframe src="https://public.tableau.com/views/IranConflictOilShock/IranConflictCross-AssetContagion?:embed=y&:display_count=yes&:showVizHome=no&:toolbar=yes" allowfullscreen></iframe>
+            </div>
+
+            <!-- WRITE-UP -->
+            <div class="writeup">
+                <h3>Overview</h3>
+                <p>On February 28, 2026, the United States and Israel launched joint military strikes against Iran, codenamed Operation Epic Fury. The strikes targeted Iranian leadership and military infrastructure, triggering immediate retaliation and disrupting traffic through the <strong>Strait of Hormuz</strong> — a critical chokepoint through which approximately 20% of global oil supply transits daily.</p>
+                <p>This project examines how the resulting oil supply shock propagated across global asset classes, measuring the speed, magnitude, and direction of contagion from commodities into equities, volatility, interest rates, and currencies. The analysis uses <strong>14 instruments tracked over 71 trading days</strong> (December 1, 2025 – March 9, 2026), with February 28 as the event date.</p>
+
+                <h3>Methodology</h3>
+                <p>The analysis is built on a <strong>7-tab Excel model</strong> feeding into a <strong>4-panel Tableau dashboard</strong>. The Excel workbook contains: Raw Data, Daily Returns (live percentage-change formulas), Normalized Prices (rebased to 100 on Feb 27), Correlation Analysis (pre-conflict vs. during-conflict matrices), Event Timeline, Summary Statistics, and Data Sources. All calculations use live Excel formulas, allowing the model to update as new data becomes available.</p>
+                <p>Data was sourced from <strong>FRED</strong> (Federal Reserve Bank of St. Louis) for commodities, volatility, rates, and major currencies, and from <strong>Investing.com</strong> for equity ETFs and emerging market exchange rates.</p>
+
+                <h3>Key Findings</h3>
+
+                <div class="finding-grid">
+                    <div class="finding-item">
+                        <h4>1. The Oil Supply Shock</h4>
+                        <p>Brent Crude surged <strong>32.3%</strong> from $71.32 to $94.35. WTI rose <strong>41.4%</strong>. Despite OPEC+ output increases and the IEA's largest-ever SPR release (172M barrels from the US), prices remained elevated throughout the period.</p>
+                    </div>
+                    <div class="finding-item">
+                        <h4>2. Clear Winners and Losers</h4>
+                        <p>Oil and VIX (+28.4%) surged. Airlines (JETS) fell <strong>-9.4%</strong> as fuel costs spiked. Notably, the ITA Defense ETF slightly <strong>declined -0.7%</strong> despite the war narrative — broader equity selling pressure may have overwhelmed sector tailwinds.</p>
+                    </div>
+                    <div class="finding-item">
+                        <h4>3. Volatility Explosion</h4>
+                        <p>Daily volatility increased across nearly every asset. VIX daily vol rose from 6.8% to 16.0% (<strong>+136%</strong>). Brent volatility tripled from 1.9% to 5.5%. Even the USD Broad Index saw volatility nearly double.</p>
+                    </div>
+                    <div class="finding-item">
+                        <h4>4. Correlation Regime Change</h4>
+                        <p>The most significant finding: <strong>S&P 500 correlation with Brent shifted from +0.01 to -0.95</strong>. VIX moved from +0.07 to +0.93. Diversification failed precisely when it was needed most — the textbook definition of contagion.</p>
+                    </div>
+                </div>
+
+                <h3>Natural Gas: A Separate Risk Event</h3>
+                <div class="callout">
+                    <p><strong>Why Natural Gas was excluded from the main chart:</strong> In January 2026, Winter Storm Fern caused Henry Hub prices to spike ~170% in a single week ($3.04 to $8.21/MMBtu), setting 79 all-time spot price records. This weather-driven domestic supply shock was fundamentally different from the geopolitical oil shock that followed a month later. Including it would have compressed all other assets into an unreadable band. This separation illustrates why risk dashboards must identify and isolate distinct risk events rather than conflating them.</p>
+                </div>
+
+                <h3>Tools & Data Sources</h3>
+                <div class="sources">
+                    <div class="source-chip"><strong>Excel</strong> — Data modeling & correlation analysis</div>
+                    <div class="source-chip"><strong>Tableau</strong> — Visualization & dashboard</div>
+                    <div class="source-chip"><strong>FRED</strong> — Oil, gas, VIX, rates, USD</div>
+                    <div class="source-chip"><strong>Investing.com</strong> — Equities, EM currencies</div>
+                    <div class="source-chip"><strong>Date Range</strong> — Dec 1, 2025 – Mar 9, 2026</div>
+                </div>
+            </div>
+        </article>
+
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" style="padding-bottom: 2rem;">
+    <div class="container">
+        <p class="section-label">About</p>
+        <h2 class="section-title">Vera Kim</h2>
+        <p class="section-desc" style="margin-bottom: 1rem;">A finance-analytics portfolio featuring Power BI and Tableau dashboards with clear explanations of the underlying metrics, assumptions, and insights. I also include book and article reviews to show continuous learning and how I apply ideas from finance and analytics to real dashboard-building and analysis.</p>
+        <div class="hero-meta">
+            <a href="mailto:verasookim@gmail.com">verasookim@gmail.com</a>
+            <a href="https://www.linkedin.com/in/vera-sookyung-kim/" target="_blank">LinkedIn &nearr;</a>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>&copy; 2026 Vera Kim &middot; Markets in Charts &middot; <a href="https://www.linkedin.com/in/vera-sookyung-kim/" target="_blank">LinkedIn</a></p>
+</footer>
+
+</body>
+</html>
