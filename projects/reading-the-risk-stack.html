@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading the Risk Stack | Markets in Charts</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav><div class="nav-inner">
+    <a href="/" class="nav-logo">Markets <span>in</span> Charts</a>
+    <ul class="nav-links">
+        <li><a href="/#projects">Projects</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="mailto:verasookim@gmail.com">Contact</a></li>
+        <li><a href="https://www.linkedin.com/in/vera-sookyung-kim/" target="_blank">LinkedIn</a></li>
+    </ul>
+</div></nav>
+
+<div class="project-page-header">
+    <a href="/" class="back-link">&#8592; Back to all projects</a>
+    <div class="project-tags" style="margin-bottom: 1.5rem;">
+        <span class="tag tag-risk">Risk Monitoring</span>
+        <span class="tag tag-excel">FRED</span>
+        <span class="tag tag-tableau">Tableau</span>
+    </div>
+    <h1>Reading the Risk Stack: Tracking Credit Spreads and Curve Regime in Tableau</h1>
+    <p class="project-page-subtitle">A three-panel monitoring tool that tracks broad credit conditions, quality deterioration within high yield, and the macro rate regime &mdash; with a toggle between levels and momentum to catch inflection points early.</p>
+</div>
+
+<article class="project-card">
+
+    <div class="metrics-bar">
+        <div class="metric"><div class="metric-value neutral">3</div><div class="metric-label">Signal Panels</div></div>
+        <div class="metric"><div class="metric-value neutral">5</div><div class="metric-label">FRED Series</div></div>
+        <div class="metric"><div class="metric-value neutral">~21</div><div class="metric-label">Day Momentum Window</div></div>
+        <div class="metric"><div class="metric-value neutral">2021&ndash;2026</div><div class="metric-label">Date Range</div></div>
+    </div>
+
+    <div class="tableau-wrapper">
+        <iframe src="https://public.tableau.com/app/profile/vera.kim4069/viz/Project1_17688550386980/Dashboard1?:embed=y&:display_count=yes&:showVizHome=no&:toolbar=yes" allowfullscreen></iframe>
+    </div>
+
+    <div class="embed-note">
+        This is an interactive dashboard. Try two things: <strong>toggle Levels vs. Momentum</strong> to compare regime vs. recent change, and <strong>zoom into recent months</strong> to catch inflections that are hard to see on the full-history view. If the dashboard doesn&rsquo;t load, <a href="https://public.tableau.com/views/MarketPulseDashboard/MarketPulseDashboard" target="_blank">view it on Tableau Public</a>.
+    </div>
+
+    <div class="writeup">
+
+        <h3>Overview</h3>
+        <p>Financial markets often move on a mix of &ldquo;rates&rdquo; and &ldquo;risk.&rdquo; When conditions tighten, it usually shows up quickly in two places: <strong>credit spreads</strong> and the <strong>shape of the yield curve</strong>. This project is a simple market pulse dashboard that tracks both, designed to answer three questions: Is credit stress rising or easing? Is risk concentrating in lower-quality issuers? And is the curve steepening, flattening, or inverted &mdash; and is that change accelerating?</p>
+
+        <h3>What the Dashboard Tracks</h3>
+        <p>The dashboard is built around three complementary signals:</p>
+        <table class="data-table">
+            <thead><tr><th>Signal</th><th>Metric</th><th>What It Tells You</th></tr></thead>
+            <tbody>
+                <tr><td>Broad credit conditions</td><td>High Yield OAS (BAMLH0A0HYM2)</td><td>Whether investors are demanding more or less compensation for credit and liquidity risk</td></tr>
+                <tr><td>Quality deterioration</td><td>Single-B OAS minus HY OAS</td><td>Whether stress is moving &ldquo;down the stack&rdquo; into lower-quality issuers</td></tr>
+                <tr><td>Macro / rate regime</td><td>10Y &minus; 2Y Treasury slope</td><td>Whether the curve is steep (growth expectations intact) or flat/inverted (late-cycle conditions)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Metrics and Definitions</h3>
+
+        <h4>Yield Curve Slope</h4>
+        <p><strong>Slope = 10Y Treasury yield &minus; 2Y Treasury yield.</strong> A more positive slope means a steeper curve; less positive or negative means flatter or inverted. The 10Y&ndash;2Y spread is a widely used regime flag (not a precise timing tool). Inputs are DGS10 and DGS2 from FRED.</p>
+
+        <h4>Credit Spread Level (Broad HY)</h4>
+        <p><strong>HY OAS = ICE BofA US High Yield Index Option-Adjusted Spread.</strong> This is the core risk appetite / stress gauge. The ICE BofA OAS represents the calculated spread between a computed index of below-investment-grade bonds (rated BB or below) and a spot Treasury curve, weighted by market capitalization. FRED series: <strong>BAMLH0A0HYM2</strong>, reported in percent units (so a reading of 2.90 corresponds to approximately 290 basis points).</p>
+
+        <h4>Single-B Premium (Quality Deterioration)</h4>
+        <p><strong>Single-B premium = Single-B OAS &minus; HY OAS.</strong> When this premium widens, stress is disproportionately hitting lower-quality names. When it narrows, relative pressure on lower quality is easing. The Single-B OAS (FRED series: <strong>BAMLH0A2HYB</strong>) tracks US dollar denominated below-investment-grade corporate debt rated B, a subset of the broader HY index.</p>
+
+        <h4>Momentum Toggle</h4>
+        <p><strong>Momentum &asymp; value today &minus; value ~21 trading days ago.</strong> I use ~21 trading days as a practical proxy for one calendar month. This is a deliberate design choice: a shorter window would be more reactive (and noisier), while a longer window would be smoother (and slower). One limitation worth noting: because missing values from holidays and data gaps are intentionally left unfilled, a fixed 21-row offset may occasionally span slightly more or fewer than 21 actual trading days. In practice, the impact is minor, but it means momentum readings around holiday-heavy periods should be interpreted with an extra grain of caution.</p>
+
+        <h3>Data and Preparation</h3>
+
+        <h4>Data Source</h4>
+        <p>All series are pulled from <strong>FRED</strong> (Federal Reserve Bank of St. Louis):</p>
+        <table class="data-table">
+            <thead><tr><th>Series</th><th>FRED Code</th><th>Used In</th></tr></thead>
+            <tbody>
+                <tr><td>2Y Treasury Yield</td><td>DGS2</td><td>Yield curve slope</td></tr>
+                <tr><td>10Y Treasury Yield</td><td>DGS10</td><td>Yield curve slope</td></tr>
+                <tr><td>HY OAS</td><td>BAMLH0A0HYM2</td><td>Credit spread level, Single-B premium denominator</td></tr>
+                <tr><td>Single-B OAS</td><td>BAMLH0A2HYB</td><td>Single-B premium numerator</td></tr>
+            </tbody>
+        </table>
+
+        <h4>Units (Easy to Misread)</h4>
+        <p>On FRED, these series are displayed in <strong>percent units</strong>. For the spread series (HY OAS and Single-B OAS), a reading like 2.90 means 2.90 percentage points, which market participants often refer to as ~290 bps. In the dashboard, spreads are plotted in percent units for consistency.</p>
+
+        <h4>Dataset Shape</h4>
+        <p>The target structure is one row per date, one column per series, with daily frequency preserved (no accidental yearly or monthly aggregation). This matters because momentum is a lookback-by-rows calculation: duplicates, gaps, or mixed frequencies can produce misleading one-month changes.</p>
+
+        <h4>Prep Checks</h4>
+        <p>Three things were verified before building the visualizations. First, the date field is recognized as a true date (not text), so daily ordering is correct. Second, no SUM aggregation was applied in the viz &mdash; rates and spreads are levels, typically displayed as AVG per date. Third, missing values are left as missing rather than auto-filled, because filling can create artificial momentum signals around holidays and data gaps.</p>
+
+        <h3>Dashboard Design Choices</h3>
+
+        <h4>Why a Levels vs. Momentum Toggle</h4>
+        <p>The toggle exists because &ldquo;level&rdquo; and &ldquo;change&rdquo; answer different questions. <strong>Levels</strong> tell you the regime: are spreads high or low relative to recent history? Is the curve inverted or steep? <strong>Momentum</strong> tells you the direction and speed: are conditions deteriorating right now, even if levels still look benign? In practice, levels can look calm while momentum is quietly turning. Conversely, levels can look stressed while momentum is already improving.</p>
+
+        <h4>Why Three Charts</h4>
+        <p>Each chart is intentionally narrow so the dashboard stays interpretable. <strong>Chart 1 (Credit Spreads)</strong> shows HY vs. Single-B OAS and answers whether broad credit is tightening or loosening. <strong>Chart 2 (Single-B Premium)</strong> shows the difference and answers whether stress is concentrated in lower quality. <strong>Chart 3 (Yield Curve Slope)</strong> shows 10Y&ndash;2Y and provides the macro regime context. Together, credit gives a stress read; the premium shows where stress is concentrated; the curve provides the macro backdrop.</p>
+
+        <h4>Why Fixed Tick Marks and Time Controls</h4>
+        <p>Time-series charts become hard to read if axis labels are cluttered or inconsistent. Fixed tick marks and simple time controls improve comparability (the same window looks consistent across charts), readability (fewer labels reduce noise), and narrative (viewers can quickly zoom to recent months without getting lost).</p>
+
+        <h3>How to Read Each Chart</h3>
+
+        <h4>Chart 1: Credit Spreads (HY vs. Single-B OAS)</h4>
+        <p><strong>What you&rsquo;re seeing:</strong> Two lines &mdash; High Yield OAS (broad HY) and Single-B OAS (lower-quality HY). These reflect the market compensation required to hold credit risk. In the levels view, Single-B sits above broad HY most of the time, which is expected since lower-quality credit typically demands extra compensation.</p>
+        <p>Spreads are relatively contained through 2021, then reprice sharply wider in early&ndash;mid 2022, marking the most obvious stress episode in the sample &mdash; consistent with the Federal Reserve&rsquo;s aggressive rate hiking cycle that began that year. After the 2022 peak, spreads tighten but remain choppy through late 2022&ndash;2023. By 2024, spreads settle into a lower, calmer range. A notable sharp widening spike appears around spring 2025, driven primarily by tariff-related uncertainty, which retraces relatively quickly as policy softened, and the series returns closer to its prior range into late 2025 / early 2026.</p>
+        <p><strong>Momentum view:</strong> HY and Single-B move closely together most of the time, meaning they often widen and tighten in sync, but Single-B tends to show slightly larger spikes during stress. The biggest momentum swings occur around mid-2022, where large positive spikes (rapid widening) are followed by large negative spikes (rapid tightening). Momentum is more contained through 2023&ndash;2024, and there is another clear burst of widening and reversal around spring 2025, consistent with the sharp level spike and quick retracement.</p>
+        <p><strong>How to interpret:</strong> Rising spread levels mean investors require more yield over Treasuries to hold risky credit &mdash; financial conditions are tightening and risk appetite is weakening. Positive momentum means spreads have widened over the lookback window, often a sign of deterioration even if the level doesn&rsquo;t look extreme yet. Start with levels to understand the regime, then flip to momentum to catch inflection points.</p>
+
+        <h4>Chart 2: Single-B Premium (Quality Deterioration)</h4>
+        <p><strong>What you&rsquo;re seeing:</strong> Single-B OAS minus High Yield OAS &mdash; a simple stress concentration metric that isolates whether lower-quality credit is being penalized more than the broad market.</p>
+        <p>Through 2021 into mid-2022, the premium is solidly positive and trends higher at times, with a clear spike around mid-2022 (the highest point in the sample). That pattern is consistent with episodes where the market demands extra compensation specifically for lower-quality risk. After the 2022 spike, the premium compresses through 2023, drifting lower toward zero.</p>
+        <p>In 2024, the premium moves below zero for a sustained stretch and reaches its lowest point (around mid-2024) before recovering. By 2025 into early 2026, it returns to a modestly positive range and stays choppy but generally above zero.</p>
+
+        <div class="callout">
+            <p><strong>On the negative premium in 2024:</strong> A sustained negative Single-B premium is an atypical regime that warrants careful interpretation. The broad HY index is a market-cap-weighted composite of BB, B, and CCC-rated bonds. Since Single-B is a subset of that composite, the &ldquo;B minus HY&rdquo; calculation can go negative if the tails of the distribution &mdash; especially CCC and below &mdash; widen enough to pull the composite OAS above the B-only OAS.</p>
+            <p>The most plausible explanation is <strong>dispersion in the distressed tail</strong>: very low-rated or distressed pockets (often CCC and below) remained wide or widened while B-rated spreads held in, distorting the relative relationship versus the broad index. This is consistent with the broader pattern of idiosyncratic stress concentrating in the weakest credits even when the rest of HY looks stable &mdash; for example, through liability management exercises (LMEs) pursued by the most distressed borrowers as alternatives to traditional default or restructuring.</p>
+            <p>In this dashboard, I treat negative readings as a prompt to double-check the mechanics and watch for regime shifts, rather than a standalone bullish signal. A fuller analysis would overlay the CCC &amp; Lower OAS (FRED series: BAMLH0A3HYC) alongside the Single-B premium to confirm whether CCC tail widening is indeed driving the negative reading.</p>
+        </div>
+
+        <h4>Chart 3: Yield Curve Slope (10Y&ndash;2Y)</h4>
+        <p><strong>What you&rsquo;re seeing:</strong> 10Y Treasury yield minus 2Y Treasury yield. In early 2021, the slope is strongly positive and peaks around the highest level in the chart (a steep curve reflecting post-COVID recovery expectations). From 2021 through 2022, the slope falls steadily and crosses below zero as the Fed aggressively hiked rates, moving into inversion by July 2022.</p>
+        <p>The curve stayed inverted through 2023 and into 2024, reaching its deepest inversion around March 2023 at approximately &minus;107 basis points &mdash; part of the longest and deepest Treasury yield curve inversion in modern history, lasting roughly 16 months. From mid/late 2024 into 2025, the slope climbed back above zero and continued re-steepening as the Fed shifted to an easing posture, ending the sample modestly positive.</p>
+        <p><strong>How it complements credit signals:</strong> Credit spreads often widen when growth risk rises and conditions tighten. The curve adds context. If the curve is flattening or inverting while spreads widen, the story is &ldquo;tightening plus late-cycle risk.&rdquo; If the curve is steepening while spreads tighten, the story is &ldquo;easing plus improving risk tone.&rdquo;</p>
+
+        <h3>Example Interpretations</h3>
+        <table class="data-table">
+            <thead><tr><th>Scenario</th><th>Signal Combination</th><th>Typical Read</th></tr></thead>
+            <tbody>
+                <tr><td>Broad risk-off with quality deterioration</td><td>Spreads up + momentum up + premium widening</td><td>Stress is hitting weaker issuers harder &mdash; classic risk-off pattern</td></tr>
+                <tr><td>Early warning</td><td>Spreads stable but momentum turns positive</td><td>Conditions may be starting to tighten before it shows up in levels</td></tr>
+                <tr><td>Improving risk tone</td><td>Curve steepening + spreads tightening</td><td>Macro looks less restrictive and credit conditions are easing</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Limitations</h3>
+        <p><strong>OAS isn&rsquo;t pure default risk.</strong> It also reflects liquidity conditions, risk appetite, and technical flows, so a move in OAS doesn&rsquo;t automatically mean fundamentals deteriorated.</p>
+        <p><strong>Momentum window choice matters.</strong> Using ~21 trading days is a design decision that changes sensitivity and noise. A shorter window catches turns faster but produces more false signals; a longer window is smoother but slower to react.</p>
+        <p><strong>No causality.</strong> This is a monitoring tool &mdash; useful for framing what&rsquo;s happening, not proving why it happened.</p>
+        <p><strong>Index construction effects.</strong> HY and Single-B indices are constructed baskets; composition and methodology can shift (especially during unusual regimes), and that can affect comparisons. The negative Single-B premium in 2024 is a case where index construction effects likely matter and warrant checking against sub-component data.</p>
+
+        <h3>Tools and Data Sources</h3>
+        <p><strong>Tools:</strong> Tableau Desktop (visualization and dashboard assembly)</p>
+        <p><strong>Data sources:</strong> FRED &mdash; Federal Reserve Bank of St. Louis (DGS2, DGS10, BAMLH0A0HYM2, BAMLH0A2HYB)</p>
+        <p><strong>Date range:</strong> 2021 &ndash; early 2026 (daily frequency)</p>
+        <div class="sources">
+            <div class="source-chip"><strong>Tableau</strong> &mdash; Visualization &amp; dashboard</div>
+            <div class="source-chip"><strong>FRED</strong> &mdash; Yields, credit spreads</div>
+            <div class="source-chip"><strong>Date Range</strong> &mdash; 2021 &ndash; early 2026</div>
+        </div>
+    </div>
+</article>
+
+<footer><p>&copy; 2026 Vera Kim &middot; Markets in Charts &middot; <a href="https://www.linkedin.com/in/vera-sookyung-kim/" target="_blank">LinkedIn</a></p></footer>
+
+</body>
+</html>
